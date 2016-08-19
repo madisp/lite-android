@@ -1,3 +1,36 @@
-plugins {
-    id 'java-gradle-plugin'
+buildscript {
+  ext.kotlin_version = '1.0.3'
+  repositories {
+    jcenter()
+  }
+  dependencies {
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+  }
+}
+
+
+allprojects {
+  version = '0.0.1-SNAPSHOT'
+  group = 'pink.madis.gradle'
+  repositories {
+    jcenter()
+  }
+  plugins.withType(org.gradle.api.publish.maven.plugins.MavenPublishPlugin) {
+    publishing {
+      publications {
+        // ewwww
+        all {
+          pom.withXml {
+            asNode().dependencies.'*'.findAll() {
+              it.scope.text() == 'runtime' && project.configurations.compile.allDependencies.find { dep ->
+                dep.name == it.artifactId.text()
+              }
+            }.each() {
+              it.scope*.value = 'compile'
+            }
+          }
+        }
+      }
+    }
+  }
 }

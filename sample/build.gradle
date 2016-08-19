@@ -1,0 +1,20 @@
+buildscript {
+  repositories {
+    mavenLocal()
+    jcenter()
+  }
+  dependencies {
+    classpath 'pink.madis.gradle:lite-android:0.0.1-SNAPSHOT'
+  }
+}
+
+apply plugin: 'pink.madis.gradle.lite-android'
+apply plugin: 'java'
+
+liteAndroid {
+  compileSdkVersion 24
+}
+
+dependencies {
+  compile 'com.android.support:support-annotations:24.2.0'
+}
