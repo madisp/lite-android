@@ -19,22 +19,19 @@ class LiteAndroidPlugin : Plugin<Project> {
         // TODO(madis) will this work with Kotlin/Scala/Groovy/whatevs?
         val compileSdkVersion = extension.compileSdkVersion
 
-        if (compileSdkVersion == null) {
-          throw IllegalStateException("lite-android: liteAndroid.compileSdkVersion not defined!" +
-              "Did you forget to add the liteAndroid {} configuration closure to the build file?")
-        }
+        if (compileSdkVersion != null) {
+          val androidJar = sdk.androidJar(compileSdkVersion)
 
-        val androidJar = sdk.androidJar(compileSdkVersion)
-
-        val compileJava = project.tasks.getByName(JavaPlugin.COMPILE_JAVA_TASK_NAME)
-        if (compileJava is JavaCompile) {
-          compileJava.options.bootClasspath = androidJar.absolutePath
+          val compileJava = project.tasks.getByName(JavaPlugin.COMPILE_JAVA_TASK_NAME)
+          if (compileJava is JavaCompile) {
+            compileJava.options.bootClasspath = androidJar.absolutePath
+          }
+          // add it to the compileOnly to keep IDEA happy, is there a better way to this?
+          // this leaves both the rt.jar and the android.jar on the classpath for IDEA
+          project.dependencies.add("compileOnly", project.files(androidJar))
+          // add to testCompileOnly to make unit testing possible
+          project.dependencies.add("testCompileOnly", project.files(androidJar))
         }
-        // add it to the compileOnly to keep IDEA happy, is there a better way to this?
-        // this leaves both the rt.jar and the android.jar on the classpath for IDEA
-        project.dependencies.add("compileOnly", project.files(androidJar))
-        // add to testCompileOnly to make unit testing possible
-        project.dependencies.add("testCompileOnly", project.files(androidJar))
       }
 
       // register all found m2 repositories
