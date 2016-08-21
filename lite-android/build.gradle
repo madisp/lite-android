@@ -13,8 +13,7 @@ sourceSets {
 
 bintray {
   user = 'madisp'
-  key = properties['BINTRAY_KEY'] ?: ''
-  publications = ['PluginMavenPublication']
+  key = project.properties['BINTRAY_KEY'] ?: ''
   pkg {
     repo = 'libs'
     name = 'lite-android'
@@ -27,5 +26,12 @@ bintray {
       released = new Date()
       vcsTag = "release-${project.version}"
     }
+  }
+}
+
+publishing.publications.all {
+  if (it.name == 'pluginMaven') {
+    // configure bintray
+    bintray.publications = ['pluginMaven']
   }
 }
