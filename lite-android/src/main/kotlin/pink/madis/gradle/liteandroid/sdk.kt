@@ -10,7 +10,7 @@ fun ensureSdk(project: Project): Sdk {
   val location = findSdk(project)
   // we're looking for the readme and platforms, if those exist then we're already good to go
   if (!location.resolve("SDK Readme.txt").exists() || !location.resolve("platforms").exists()) {
-    throw IllegalArgumentException(
+    throw FileNotFoundException(
         "lite-android: No valid SDK location found at '$location'.\nPlease ensure a correct" +
         "SDK location is defined through the sdk.dir property in local.properties file or the ANDROID_HOME environment" +
         "variable")
