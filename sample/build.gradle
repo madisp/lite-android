@@ -11,8 +11,12 @@ buildscript {
 apply plugin: 'pink.madis.gradle.lite-android'
 apply plugin: 'java'
 
+sourceCompatibility = JavaVersion.VERSION_1_7
+targetCompatibility = JavaVersion.VERSION_1_7
+
 liteAndroid {
   compileSdkVersion 24
+  buildToolsVersion '24.0.1'
 }
 
 dependencies {

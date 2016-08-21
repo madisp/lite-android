@@ -45,6 +45,8 @@ fun findSdk(project: Project): File {
 class Sdk(baseDir: File) {
   private val platforms = baseDir.resolve("platforms")
   private val extras = baseDir.resolve("extras")
+  private val buildtools = baseDir.resolve("build-tools")
+
   private val repos = listOf(
       extras.resolve("m2repository"),
       extras.resolve("android").resolve("m2repository"),
@@ -52,12 +54,25 @@ class Sdk(baseDir: File) {
   )
 
   fun androidJar(version: String): File {
-    val f = platforms.resolve(version).resolve("android.jar")
-    if (f.exists()) {
-      return f
-    }
-    throw FileNotFoundException("The android.jar file for platform '$version' was not found. Either it's a typo or the SDK is missing it.");
+    return platforms
+        .resolve(version)
+        .resolve("android.jar")
+        .ensure("The android.jar file for platform '$version' was not found. Either it's a typo or the SDK is missing it.")
+  }
+
+  fun dx(buildToolsVersion: String): File {
+    return buildtools
+        .resolve(buildToolsVersion)
+        .resolve("dx")
+        .ensure("The dx for build tools '$buildToolsVersion' could not be found. Please make sure that the SDK is complete.")
   }
 
   fun extraRepos(): List<File> = repos.filter { it.exists() && it.isDirectory }
+}
+
+fun File.ensure(message: String): File {
+  if (exists()) {
+    return this
+  }
+  throw FileNotFoundException(message)
 }
