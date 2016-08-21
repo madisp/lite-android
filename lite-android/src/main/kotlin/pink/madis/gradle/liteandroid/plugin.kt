@@ -2,7 +2,6 @@ package pink.madis.gradle.liteandroid
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.ProjectEvaluationListener
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.compile.JavaCompile
