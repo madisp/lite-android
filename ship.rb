@@ -8,7 +8,7 @@ end
 
 def sh(cmd)
   if $perform
-    system(cmd)
+    `#{cmd}`
   else
     puts "$ #{cmd}"
   end
@@ -29,12 +29,18 @@ parts[-1] = (parts.last.to_i + 1).to_s
 next_version = parts.join('.')
 
 puts "Next version? [#{next_version}]"
-input = gets.strip
+input = $stdin.gets.strip
 if input.length > 0
   next_version = input
 end
 
 next_version = next_version + "-SNAPSHOT"
+
+if $perform
+  puts "Performing release:"
+else
+  puts "I would run the following shell commands:"
+end
 
 # update version.txt
 sh("echo '#{version}' > version.txt")
