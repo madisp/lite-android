@@ -9,9 +9,10 @@ buildscript {
   }
 }
 
+def versionStr = file('version.txt').text.trim()
 
 allprojects {
-  version = '0.0.1-SNAPSHOT'
+  version = versionStr
   group = 'pink.madis.gradle'
   repositories {
     jcenter()
