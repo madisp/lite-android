@@ -8,9 +8,10 @@ end
 
 def sh(cmd)
   if $perform
+    puts "> #{cmd}"
     `#{cmd}`
   else
-    puts "$ #{cmd}"
+    puts "# #{cmd}"
   end
 end
 
