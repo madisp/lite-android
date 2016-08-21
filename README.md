@@ -1,6 +1,8 @@
 Lite Android Gradle Plugin
 ==========================
 
+[![Build Status](https://travis-ci.org/madisp/lite-android.svg?branch=master)](https://travis-ci.org/madisp/lite-android)
+
 A lightweight unofficial Gradle plugin aiming to simplify building Android libraries with the Java plugin applied.
 Only emitting jars is supported, no support for resources.
 
