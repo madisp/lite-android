@@ -1,6 +1,7 @@
 apply plugin: 'java-gradle-plugin'
 apply plugin: 'kotlin'
 apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
 
 dependencies {
   compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -8,4 +9,23 @@ dependencies {
 
 sourceSets {
   main.java.srcDirs += 'src/main/kotlin'
+}
+
+bintray {
+  user = 'madisp'
+  key = properties['BINTRAY_KEY'] ?: ''
+  publications = ['PluginMavenPublication']
+  pkg {
+    repo = 'libs'
+    name = 'lite-android'
+    licenses = ['MIT']
+    vcsUrl = 'https://github.com/madisp/lite-android'
+
+    version {
+      name = project.version
+      desc = 'Alternative lightweight Gradle plugin for Android libraries'
+      released = new Date()
+      vcsTag = "release-${project.version}"
+    }
+  }
 }
