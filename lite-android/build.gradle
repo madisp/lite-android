@@ -1,9 +1,10 @@
-apply plugin: 'java-gradle-plugin'
+apply plugin: 'java'
 apply plugin: 'kotlin'
 apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
 
 dependencies {
+  compileOnly gradleApi()
   compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 
@@ -11,8 +12,17 @@ sourceSets {
   main.java.srcDirs += 'src/main/kotlin'
 }
 
+publishing {
+  publications {
+    pluginMaven(MavenPublication) {
+      from components.java
+    }
+  }
+}
+
 bintray {
   user = 'madisp'
+  bintray.publications = ['pluginMaven']
   key = project.properties['BINTRAY_KEY'] ?: ''
   pkg {
     repo = 'libs'
@@ -26,12 +36,5 @@ bintray {
       released = new Date()
       vcsTag = "release-${project.version}"
     }
-  }
-}
-
-publishing.publications.all {
-  if (it.name == 'pluginMaven') {
-    // configure bintray
-    bintray.publications = ['pluginMaven']
   }
 }
