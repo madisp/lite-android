@@ -71,3 +71,4 @@ bintray {
 }
 
 bintrayUpload.dependsOn jar
+bintrayUpload.dependsOn generatePomFileForPluginMavenPublication
