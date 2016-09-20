@@ -22,7 +22,7 @@ fun ensureSdk(project: Project): Sdk {
 fun findSdk(project: Project): File {
   var sdkDir: String? = null
   // use local.properties first
-  val localProps = project.file("local.properties")
+  val localProps = project.rootProject.file("local.properties")
   if (localProps.exists()) {
     val props = Properties()
     localProps.reader(StandardCharsets.UTF_8).use {
