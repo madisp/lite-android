@@ -45,7 +45,7 @@ class LiteAndroidPlugin : Plugin<Project> {
       val dxTask = project.tasks.create("dex", DxTask::class.java)
       dxTask.dependsOn(jarTask)
 
-      dxTask.input = project.files(jarTask)
+      dxTask.input = project.files(jarTask) + project.files(project.configurations.getByName("compile").files)
       val filename = listOf(jarTask.baseName, jarTask.appendix, jarTask.version)
           .filterNotNull().joinToString("-") + ".dex"
       dxTask.output = project.buildDir.resolve("dexes").resolve(filename)
