@@ -69,3 +69,5 @@ bintray {
     }
   }
 }
+
+bintrayUpload.dependsOn jar
