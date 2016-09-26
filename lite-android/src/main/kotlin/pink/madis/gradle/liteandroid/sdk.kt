@@ -1,5 +1,6 @@
 package pink.madis.gradle.liteandroid
 
+import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.Project
 import java.io.File
 import java.io.FileNotFoundException
@@ -43,6 +44,7 @@ fun findSdk(project: Project): File {
 }
 
 class Sdk(baseDir: File) {
+  private val dxExecutable = if (Os.isFamily(Os.FAMILY_WINDOWS)) "dx.bat" else "dx"
   private val platforms = baseDir.resolve("platforms")
   private val extras = baseDir.resolve("extras")
   private val buildtools = baseDir.resolve("build-tools")
@@ -63,7 +65,7 @@ class Sdk(baseDir: File) {
   fun dx(buildToolsVersion: String): File {
     return buildtools
         .resolve(buildToolsVersion)
-        .resolve("dx")
+        .resolve(dxExecutable)
         .ensure("The dx for build tools '$buildToolsVersion' could not be found. Please make sure that the SDK is complete.")
   }
 
