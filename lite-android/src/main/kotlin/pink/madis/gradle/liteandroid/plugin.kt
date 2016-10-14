@@ -3,30 +3,22 @@ package pink.madis.gradle.liteandroid
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
-import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.compile.JavaCompile
 
 class LiteAndroidPlugin : Plugin<Project> {
   override fun apply(project: Project) {
-    val extension = LiteAndroidExtension()
-    project.extensions.add("liteAndroid", extension)
-
     // try to find the SDK
     val sdk = ensureSdk(project)
 
-    project.afterEvaluate {
-      val compileSdkVersion = extension.compileSdkVersion
-      val buildToolsVersion = extension.buildToolsVersion
+    val extension = LiteAndroidExtension(sdk)
+    project.extensions.add("liteAndroid", extension)
 
-      project.plugins.withType(JavaPlugin::class.java) {
-        if (compileSdkVersion != null) {
+    project.afterEvaluate {
+      extension.compileSdkVersion?.let { compileSdkVersion ->
+        project.plugins.withType(JavaPlugin::class.java) {
           // put the android.jar on the boot cp of both the test task and the java task
           // TODO(madis) will this work with Kotlin/Scala/Groovy/whatevs?
           configureAndroidJar(project, sdk, compileSdkVersion)
-        }
-        if (buildToolsVersion != null) {
-          // create the dx task
-          configureDx(project, sdk, buildToolsVersion)
         }
       }
 
@@ -36,23 +28,6 @@ class LiteAndroidPlugin : Plugin<Project> {
           it.setUrl(repoLocation)
         }
       }
-    }
-  }
-
-  private fun configureDx(project: Project, sdk: Sdk, buildToolsVersion: String) {
-    val jarTask = project.tasks.getByName(JavaPlugin.JAR_TASK_NAME)
-    if (jarTask is AbstractArchiveTask) {
-      val dxTask = project.tasks.create("dex", DxTask::class.java)
-      dxTask.dependsOn(jarTask)
-
-      dxTask.input = project.files(jarTask) + project.files(project.configurations.getByName("compile").files)
-      val filename = listOf(jarTask.baseName, jarTask.appendix, jarTask.version)
-          .filterNotNull().joinToString("-") + ".dex"
-      dxTask.output = project.buildDir.resolve("dexes").resolve(filename)
-      dxTask.withDx(sdk.dx(buildToolsVersion))
-
-      val dexConfig = project.configurations.create("dex")
-      project.artifacts.add(dexConfig.name, dxTask.output)
     }
   }
 
@@ -72,7 +47,7 @@ class LiteAndroidPlugin : Plugin<Project> {
 }
 
 @Suppress("RedundantVisibilityModifier", "unused") // should be visible and can be unused
-public class LiteAndroidExtension {
+public class LiteAndroidExtension(internal val sdk: Sdk) {
   var compileSdkVersion: String? = null
   var buildToolsVersion: String? = null
 

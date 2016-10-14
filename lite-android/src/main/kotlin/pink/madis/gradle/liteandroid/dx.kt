@@ -1,37 +1,47 @@
 package pink.madis.gradle.liteandroid
 
+import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
+import org.gradle.api.internal.file.collections.SimpleFileCollection
 import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputFile
 import java.io.File
 
-open class DxTask: Exec() {
+open class DxTask: Exec {
   @InputFiles
-  var input: FileCollection? = null
+  internal var input: FileCollection = project.files()
 
   @OutputFile
-  var output: File? = null
+  var output: File = project.buildDir.resolve("dexes").resolve(name).resolve("classes.dex")
 
-  fun withDx(dx: File) {
-    val inp = input
-    val out = output
+  fun from(task: Task) {
+    dependsOn(task)
+    from(task.outputs.files)
+  }
 
-    if (inp == null) {
-      throw IllegalArgumentException("Input files are not defined for the dex task")
+  fun from(file: File) {
+    from(SimpleFileCollection(file))
+  }
+
+  fun from(files: FileCollection) {
+    input += files
+  }
+
+  constructor() : super() {
+    // why is this required?
+    project.afterEvaluate {
+      doFirst {
+        val ext = project.extensions.getByType(LiteAndroidExtension::class.java)
+        val buildTools = ext.buildToolsVersion ?: throw IllegalStateException("Dx task used but buildToolsVersion not set in the liteAndroid {} block")
+        setExecutable(ext.sdk.dx(buildTools))
+
+        setArgs(listOf(
+            "--dex",
+            "--output",
+            output.absolutePath
+        ) + input.files.map { it.absolutePath })
+      }
     }
-
-    if (out == null) {
-      throw IllegalArgumentException("Output path is not defined for the dex task")
-    }
-
-    val args = listOf(
-        "--dex",
-        "--output",
-        out.absolutePath
-    ) + inp.files.map { it.absolutePath }
-
-    setExecutable(dx)
-    setArgs(args)
   }
 }

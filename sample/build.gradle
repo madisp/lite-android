@@ -4,9 +4,11 @@ buildscript {
     jcenter()
   }
   dependencies {
-    classpath 'pink.madis.gradle:lite-android:0.0.1-SNAPSHOT'
+    classpath 'pink.madis.gradle:lite-android:0.0.5-SNAPSHOT'
   }
 }
+
+import pink.madis.gradle.liteandroid.DxTask
 
 apply plugin: 'pink.madis.gradle.lite-android'
 apply plugin: 'java'
@@ -21,4 +23,9 @@ liteAndroid {
 
 dependencies {
   compile 'com.android.support:support-annotations:24.2.0'
+}
+
+task dex(type: DxTask) {
+  from tasks.jar
+  from configurations.compile
 }
