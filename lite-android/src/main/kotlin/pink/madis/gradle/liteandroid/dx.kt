@@ -10,10 +10,12 @@ import java.io.File
 
 open class DxTask: Exec {
   @InputFiles
-  internal var input: FileCollection = project.files()
+  var input: FileCollection = project.files()
+    internal set
 
   @OutputFile
   var output: File = project.buildDir.resolve("dexes").resolve(name).resolve("classes.dex")
+    internal set
 
   fun from(task: Task) {
     dependsOn(task)
@@ -26,6 +28,10 @@ open class DxTask: Exec {
 
   fun from(files: FileCollection) {
     input += files
+  }
+
+  fun to(file: File) {
+    output = file
   }
 
   constructor() : super() {

@@ -4,7 +4,7 @@ buildscript {
     jcenter()
   }
   dependencies {
-    classpath 'pink.madis.gradle:lite-android:0.0.5-SNAPSHOT'
+    classpath 'pink.madis.gradle:lite-android:0.0.6-SNAPSHOT'
   }
 }
 
