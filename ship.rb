@@ -55,7 +55,7 @@ sh("echo '#{next_version}' > version.txt")
 sh("git add version.txt")
 sh("git commit -m 'Bump development version to #{next_version}'")
 # push
-sh("git push")
+sh("git push --tags")
 # ship
 sh("git checkout 'release-#{version}'")
 sh("./gradlew clean jar generatePomFileForPluginMavenPublication bintrayUpload")
