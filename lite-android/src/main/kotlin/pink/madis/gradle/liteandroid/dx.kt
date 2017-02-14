@@ -5,10 +5,11 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.file.collections.SimpleFileCollection
 import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.OutputFile
 import java.io.File
 
-open class DxTask: Exec {
+open class DxTask: JavaExec {
   @InputFiles
   var input: FileCollection = project.files()
     internal set
@@ -40,7 +41,8 @@ open class DxTask: Exec {
       doFirst {
         val ext = project.extensions.getByType(LiteAndroidExtension::class.java)
         val buildTools = ext.buildToolsVersion ?: throw IllegalStateException("Dx task used but buildToolsVersion not set in the liteAndroid {} block")
-        setExecutable(ext.sdk.dx(buildTools))
+        classpath = SimpleFileCollection(ext.sdk.dxJar(buildTools))
+        main = "com.android.dx.command.Main"
 
         setArgs(listOf(
             "--dex",

@@ -44,7 +44,6 @@ fun findSdk(project: Project): File {
 }
 
 class Sdk(baseDir: File) {
-  private val dxExecutable = if (Os.isFamily(Os.FAMILY_WINDOWS)) "dx.bat" else "dx"
   private val platforms = baseDir.resolve("platforms")
   private val extras = baseDir.resolve("extras")
   private val buildtools = baseDir.resolve("build-tools")
@@ -62,11 +61,12 @@ class Sdk(baseDir: File) {
         .ensure("The android.jar file for platform '$version' was not found. Either it's a typo or the SDK is missing it.")
   }
 
-  fun dx(buildToolsVersion: String): File {
+  fun dxJar(buildToolsVersion: String): File {
     return buildtools
         .resolve(buildToolsVersion)
-        .resolve(dxExecutable)
-        .ensure("The dx for build tools '$buildToolsVersion' could not be found. Please make sure that the SDK is complete.")
+        .resolve("lib")
+        .resolve("dx.jar")
+        .ensure("The dx jar for build tools '$buildToolsVersion' could not be found. Please make sure that the SDK is complete.")
   }
 
   fun extraRepos(): List<File> = repos.filter { it.exists() && it.isDirectory }

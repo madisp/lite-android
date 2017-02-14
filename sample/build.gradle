@@ -4,7 +4,8 @@ buildscript {
     jcenter()
   }
   dependencies {
-    classpath 'pink.madis.gradle:lite-android:0.0.6-SNAPSHOT'
+    def versionStr = file('../version.txt').text.trim()
+    classpath "pink.madis.gradle:lite-android:${versionStr}"
   }
 }
 
